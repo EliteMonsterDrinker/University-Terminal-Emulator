@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 import java.net.UnknownHostException;
 
 public class UI extends JFrame{
-    private JTextArea output;
-    private JTextArea input;
+    private JTextArea outputArea;
+    private JTextField inputField;
     public UI(){
         //создаём окно на основе реальных данных пк
         String username = System.getProperty("user.name");
@@ -22,20 +22,36 @@ public class UI extends JFrame{
         }
 
         setTitle("Эмулятор:  [" + username + "@" + hostname + "]");
-        //дефолтный размер окна, потом меняется
-        setSize(new Dimension(600,400));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
         //вычисляем размер
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension win = getSize();
-        //если окно меньше, чем полный экран, то задаём ему полноэкранные значения
-        setSize(Math.max(win.width, screen.width), Math.max(win.height, screen.height));
+        setSize(screen.width, screen.height);
+        //тут мы рисуем сам интерфейс
+
+        //поле вывода
+        outputArea = new JTextArea();
         setLayout(new BorderLayout());
+        outputArea.setEditable(false);
+        outputArea.setBackground(Color.BLACK);
+        outputArea.setForeground(Color.ORANGE);
+        outputArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+
+        //добавляет пролистывание страницы и рендерит текстовые поля
+        JScrollPane scrollPane = new JScrollPane(outputArea);
+
+        //поле ввода
+        inputField = new JTextField();
+        inputField.setBackground(Color.BLACK);
+        inputField.setForeground(Color.GREEN);
+        inputField.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        inputField.setCaretColor(Color.GREEN);
+        //расставляет элементы в окне
+        add(scrollPane, BorderLayout.CENTER);
+        add(inputField, BorderLayout.SOUTH);
+        setVisible(true);
         }
 
         public static void main(String[] args){
-
-            UI test = new UI();
+            SwingUtilities.invokeLater(()-> new UI());
         }
 }
