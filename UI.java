@@ -5,13 +5,19 @@ import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.net.UnknownHostException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class UI extends JFrame{
+class UI extends JFrame{
     private String prompt; //системное приглашение
     private JTextArea outputArea;
     private JTextField inputField;
+    private final BlockingQueue<String> commandQueue;
+    //поле для очереди команд
 
-    public UI(){
+    public UI(BlockingQueue<String> commandQueue){
+        //создаём в объекте очередь для заполнения командами
+        this.commandQueue = commandQueue;
         //создаём окно на основе реальных данных пк
         String username = System.getProperty("user.name");
         String hostname;
@@ -62,7 +68,10 @@ public class UI extends JFrame{
                 if(!command.isEmpty()){
                     outputArea.append(command + "\n");
                     outputArea.append(prompt);
-                    inputField.setText(""); //очищаем текстовое поле ввода
+                    inputField.setText("");
+                    //добавляем в очередь команд
+                    commandQueue.offer(command);
+                    //очищаем текстовое поле ввода
                     outputArea.setCaretPosition(outputArea.getDocument().getLength()); //опускаем каретку ниже
                 }
 
@@ -75,7 +84,7 @@ public class UI extends JFrame{
         setVisible(true);
         }
 
-        public static void main(String[] args) {
-                UI test = new UI();
+        public BlockingQueue<String> getCommands(){
+            return commandQueue;
         }
 }
