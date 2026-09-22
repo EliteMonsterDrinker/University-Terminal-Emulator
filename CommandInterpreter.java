@@ -61,10 +61,10 @@ public class CommandInterpreter implements Runnable{
     //создаём команды
     private void registerDefaults(){
         register(new PwdCommand());
-        //register(new CdCommand());
-        //register(new LsCommand());
-        //register(new EchoCommand());
+        register(new CdCommand());
+        register(new LsCommand());
+        //register(new ClearCommand());
         //register(new HelpCommand());
-        //register(new ExitCommand());
+        register(new ExitCommand());
     }
 }
