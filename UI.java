@@ -37,8 +37,8 @@ class UI extends JFrame{
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         //такая высота, так как иначе текстовая строка плохо в окно помещается. Выбрал опытным путём
         setSize(screen.width, screen.height-75);
-        //тут мы рисуем сам интерфейс
 
+        //тут мы рисуем сам интерфейс
         //поле вывода
         outputArea = new JTextArea();
         setLayout(new BorderLayout());
@@ -67,12 +67,10 @@ class UI extends JFrame{
                 String command = inputField.getText().trim();
                 if(!command.isEmpty()){
                     outputArea.append(command + "\n");
-                    outputArea.append(prompt);
                     inputField.setText("");
+                    //очищаем текстовое поле ввода
                     //добавляем в очередь команд
                     commandQueue.offer(command);
-                    //очищаем текстовое поле ввода
-                    outputArea.setCaretPosition(outputArea.getDocument().getLength()); //опускаем каретку ниже
                 }
 
             }
@@ -86,5 +84,20 @@ class UI extends JFrame{
 
         public BlockingQueue<String> getCommands(){
             return commandQueue;
+        }
+        //вызывается только после исполнения команды
+        public void showPrompt(){
+            SwingUtilities.invokeLater(()->{
+                outputArea.append(prompt);
+                //опускает каретку
+                outputArea.setCaretPosition(outputArea.getDocument().getLength());
+            });
+        }
+
+        public void appendOutput(String text){
+            SwingUtilities.invokeLater(()->{
+                outputArea.append(text);
+                outputArea.setCaretPosition(outputArea.getDocument().getLength());
+            });
         }
 }
