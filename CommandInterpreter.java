@@ -15,11 +15,11 @@ public class CommandInterpreter implements Runnable{
     private final Runnable onIdle; //показать системное приглашение через UI
     private final Map<String, Command> registry = new HashMap<>(); //каждой текстовой команде сопоставляем рабочую команду
     private final CommandContext ctx;
-    public CommandInterpreter(BlockingQueue<String> queue, Consumer<String> out, Runnable onIdle, Path initialCwd){
+    public CommandInterpreter(BlockingQueue<String> queue, Consumer<String> out, Runnable onIdle, Runnable onClear, Path initialCwd){
         this.queue = queue;
         this.out = out;
         this.onIdle = onIdle;
-        this.ctx = new CommandContext(out, initialCwd);
+        this.ctx = new CommandContext(out, onClear, ()->registry.values(), initialCwd);
         registerDefaults(); // зарегистрированные команды
     }
 
@@ -48,6 +48,7 @@ public class CommandInterpreter implements Runnable{
         Command c = registry.get(parts[0]); //получаем первую команду
         if(c == null){
             out.accept("Неизвестная команда: " + parts[0] + "\n");
+            out.accept("Введите help для помощи \n");
             return;
         }
         List<String> args = Arrays.asList(parts).subList(1, parts.length);
@@ -63,8 +64,8 @@ public class CommandInterpreter implements Runnable{
         register(new PwdCommand());
         register(new CdCommand());
         register(new LsCommand());
-        //register(new ClearCommand());
-        //register(new HelpCommand());
+        register(new ClearCommand());
+        register(new HelpCommand());
         register(new ExitCommand());
     }
 }

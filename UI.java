@@ -100,4 +100,8 @@ class UI extends JFrame{
                 outputArea.setCaretPosition(outputArea.getDocument().getLength());
             });
         }
+        public void clearOutput(){
+            outputArea.setText("");
+            outputArea.setCaretPosition(0);
+        }
 }

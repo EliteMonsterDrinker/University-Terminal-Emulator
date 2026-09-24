@@ -8,7 +8,7 @@ public class LsCommand implements Command{
     public String name(){return "ls";}
     public String help(){return "list directory(показывает список файлов внутри директории)";}
     public void execute(List<String> args, CommandContext ctx) throws IOException{
-        //если путь
+        //если путь пустой - переводит в домашнюю папку, иначе по аргументу
         Path dir;
         if(args.isEmpty()){
             dir = ctx.cwd();
