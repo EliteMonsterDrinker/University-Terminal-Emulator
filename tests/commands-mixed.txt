@@ -1,0 +1,4 @@
+pwd
+llls 
+oxit
+exit
