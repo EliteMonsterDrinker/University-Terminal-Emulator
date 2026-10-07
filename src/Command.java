@@ -1,29 +1,40 @@
 import java.util.List;
 
 /**
- * Template that all terminal commands must implement.
+ * интерфейс для всех команд терминала.
+ *
+ * <p>Каждая команда должна уметь:
+ * <ul>
+ *   <li>сообщить своё имя ({@link #name()});</li>
+ *   <li>выдать краткое описание ({@link #help()});</li>
+ *   <li>выполнить действие ({@link #execute(List, CommandContext)}).</li>
+ * </ul>
+ *
  */
+
 public interface Command {
+
     /**
-     * Returns the command name.
+     * Возвращает имя команды, под которым она регистрируется в интерпретаторе.
      *
-     * @return command name
+     * @return имя команды (например, {@code "ls"})
      */
     String name();
 
     /**
-     * Returns a short command description.
+     * Возвращает краткое текстовое описание команды для справки.
      *
-     * @return help text
+     * @return текст справки
      */
     String help();
 
     /**
-     * Executes the command.
+     * Выполняет команду с указанными аргументами в заданном контексте.
      *
-     * @param args command arguments
-     * @param ctx command context
-     * @throws Exception if execution fails
+     * @param args аргументы команды (без самого имени)
+     * @param ctx  контекст выполнения, предоставляющий доступ к cwd,
+     *             потоку вывода и другим командам
+     * @throws Exception если выполнение завершилось ошибкой
      */
     void execute(List<String> args, CommandContext ctx) throws Exception;
 }

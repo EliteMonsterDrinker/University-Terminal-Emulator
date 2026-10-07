@@ -1,4 +1,4 @@
 pwd
-llls 
+llls
 oxit
 exit

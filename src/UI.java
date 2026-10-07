@@ -15,18 +15,38 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
- * Swing user interface for the terminal emulator.
+ * Графический интерфейс эмулятора
+ *
+ * <p>Состоит из двух компонентов:
+ * <ul>
+ *   <li>{@link JTextArea} — область вывода</li>
+ *   <li>{@link JTextField} — поле ввода</li>
+ * </ul>
+ *
+ * <p>Пользовательский ввод попадает в {@link BlockingQueue} и обрабатывается
+ * потоком {@link CommandInterpreter}. Все изменения UI выполняются в потоке
+ * EDT через {@link SwingUtilities#invokeLater(Runnable)}.
+ *
+ * @see CommandInterpreter
  */
 class UI extends JFrame {
+
+    /** Очередь команд, разделяемая с интерпретатором. */
     private final BlockingQueue<String> commandQueue;
+
+    /** Приглашение командной строки */
     private final String prompt;
+
+    /** Область вывода. */
     private JTextArea outputArea;
+
+    /** Поле ввода. */
     private JTextField inputField;
 
     /**
-     * Creates the terminal window.
+     * Создаёт окно терминала.
      *
-     * @param commandQueue queue for commands entered by the user
+     * @param commandQueue очередь для передачи введённых команд интерпретатору
      */
     public UI(BlockingQueue<String> commandQueue) {
         this.commandQueue = commandQueue;
@@ -42,6 +62,10 @@ class UI extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Определяет имя хоста.
+     *
+     */
     private String resolveHostname() {
         try {
             return InetAddress.getLocalHost().getHostName();
@@ -50,15 +74,22 @@ class UI extends JFrame {
         }
     }
 
+    /**
+     *
+     * @param username имя пользователя
+     * @param hostname имя хоста
+     */
     private void configureFrame(String username, String hostname) {
         setTitle("Эмулятор:  [" + username + "@" + hostname + "]");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screen.width, screen.height - 75);
-        setSize(screen.width, screen.height - 75); //-75 было получено опытным путём. Так лучше выглядит
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Создаёт и настраивает область вывода.
+     */
     private void createOutputArea() {
         outputArea = new JTextArea();
         outputArea.setEditable(false);
@@ -68,6 +99,9 @@ class UI extends JFrame {
         outputArea.append("Добро пожаловать в терминал! \n" + prompt);
     }
 
+    /**
+     * Создаёт и настраивает поле ввода.
+     */
     private void createInputField() {
         inputField = new JTextField();
         inputField.setBackground(Color.BLACK);
@@ -76,12 +110,18 @@ class UI extends JFrame {
         inputField.setCaretColor(Color.GREEN);
     }
 
+    /**
+     * Добавляет компоненты в окно.
+     */
     private void addComponents() {
         JScrollPane scrollPane = new JScrollPane(outputArea);
         add(scrollPane, BorderLayout.CENTER);
         add(inputField, BorderLayout.SOUTH);
     }
 
+    /**
+     * Ввод на нажатие enter
+     */
     private void wireInput() {
         inputField.addActionListener(new ActionListener() {
             @Override
@@ -97,16 +137,16 @@ class UI extends JFrame {
     }
 
     /**
-     * Returns the queue of commands entered by the user.
+     * Возвращает очередь команд.
      *
-     * @return command queue
+     * @return очередь команд
      */
     public BlockingQueue<String> getCommands() {
         return commandQueue;
     }
 
     /**
-     * Shows the system prompt in the output area.
+     * Показывает приглашение командной строки в области вывода.
      */
     public void showPrompt() {
         SwingUtilities.invokeLater(() -> {
@@ -116,9 +156,9 @@ class UI extends JFrame {
     }
 
     /**
-     * Appends text to the output area.
+     * Дописывает текст в область вывода.
      *
-     * @param text text to append
+     * @param text текст для добавления
      */
     public void appendOutput(String text) {
         SwingUtilities.invokeLater(() -> {
@@ -128,7 +168,7 @@ class UI extends JFrame {
     }
 
     /**
-     * Clears the output area.
+     * Очищает область вывода.
      */
     public void clearOutput() {
         outputArea.setText("");

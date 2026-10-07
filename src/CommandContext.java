@@ -4,21 +4,38 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Shared context passed to commands.
- */
+ * Общий контекст, передаваемый каждой команде при выполнении.
+ *
+ * <p>Содержит:
+ * <ul>
+ *   <li>приёмник вывода ({@link Consumer}{@code <String>});</li>
+ *   <li>действие очистки экрана ({@link Runnable});</li>
+ *   <li>поставщик зарегистрированных команд ({@link Supplier});</li>
+ *   <li>текущую рабочую директорию ({@link Path}).</li>
+ * </ul>
+ * */
+
 public final class CommandContext {
+
+    /** Приёмник строк для вывода на терминал. */
     private final Consumer<String> out;
+
+    /** Действие очистки экрана. */
     private final Runnable clear;
+
+    /** Поставщик коллекции зарегистрированных команд. */
     private final Supplier<Collection<Command>> commands;
+
+    /** Текущая рабочая директория. */
     private Path cwd;
 
     /**
-     * Creates a command context.
+     * Создаёт контекст выполнения.
      *
-     * @param out output consumer
-     * @param clear callback that clears the terminal
-     * @param commandSupplier supplier of registered commands
-     * @param cwd current working directory
+     * @param out              приёмник вывода
+     * @param clear            действие очистки экрана
+     * @param commandSupplier  поставщик зарегистрированных команд
+     * @param cwd              начальная рабочая директория
      */
     public CommandContext(
         Consumer<String> out,
@@ -32,43 +49,43 @@ public final class CommandContext {
         }
 
         /**
-         * Returns all registered commands.
+         * Возвращает коллекцию зарегистрированных команд.
          *
-         * @return registered commands
+         * @return коллекция команд
          */
         public Collection<Command> commands() {
             return commands.get();
         }
 
         /**
-         * Prints a line to the terminal output.
+         * Печатает строку в вывод терминала, добавляя перевод строки.
          *
-         * @param s text to print
+         * @param s строка для печати
          */
         public void println(String s) {
             out.accept(s + "\n");
         }
 
         /**
-         * Returns the current working directory.
+         * Возвращает текущую рабочую директорию.
          *
-         * @return current working directory
+         * @return текущая рабочая директория
          */
         public Path cwd() {
             return cwd;
         }
 
         /**
-         * Sets the current working directory.
+         * Устанавливает новую рабочую директорию.
          *
-         * @param p new working directory
+         * @param p новый путь
          */
         public void setCwd(Path p) {
             this.cwd = p;
         }
 
         /**
-         * Clears the terminal output.
+         * Очищает вывод терминала.
          */
         public void clear() {
             clear.run();
