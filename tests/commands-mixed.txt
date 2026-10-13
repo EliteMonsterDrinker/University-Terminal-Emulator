@@ -1,4 +1,0 @@
-pwd
-llls
-oxit
-exit

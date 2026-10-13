@@ -1,0 +1,9 @@
+cd /home/user
+ls
+chmod 600 readme.txt
+ls
+chmod rwxr-xr-x readme.txt
+vfs-info
+chmod 777
+cd ..
+exit

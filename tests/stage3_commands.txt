@@ -1,0 +1,16 @@
+vfs-info
+pwd
+ls
+ls /home
+ls /home/user
+cd /home/user
+pwd
+ls
+cd ..
+pwd
+cd /etc
+ls
+cat_not_existing_command
+cd /does/not/exist
+vfs-info
+exit

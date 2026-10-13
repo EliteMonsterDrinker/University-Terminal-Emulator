@@ -1,4 +1,0 @@
-pwd
-ls
-cd ~
-exit
