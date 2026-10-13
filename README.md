@@ -1,14 +1,13 @@
 <div align="center">
 
-# 🖥️ University Terminal Emulator
+# University Terminal Emulator
 
 **Эмулятор терминала UNIX-подобной системы (Вариант 16)**
 
 [![Java](https://img.shields.io/badge/Java-17+-orange?logo=java)](https://www.java.com/)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)]()
+[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-blue)]()
 [![GitHub repo size](https://img.shields.io/github/repo-size/EliteMonsterDrinker/University-Terminal-Emulator)]()
 [![GitHub last commit](https://img.shields.io/github/last-commit/EliteMonsterDrinker/University-Terminal-Emulator)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
 
 </div>
 
@@ -99,7 +98,7 @@ University-Terminal-Emulator/
 
 ---
 
-## 🚀 Сборка и запуск
+## Сборка и запуск
 
 ### Linux / macOS
 
@@ -125,7 +124,7 @@ java -cp "src:tests" org.junit.runner.JUnitCore <имя_тестового_кл�
 
 ---
 
-##Примеры использования
+## Примеры использования
 
 ### Пример сессии работы с эмулятором
 
@@ -158,7 +157,5 @@ OK
 ```
 
 ---
-
-## 📜 Лицензия
 
 Этот проект распространяется под лицензией MIT. Подробнее см. в файле [LICENSE](LICENSE).s
