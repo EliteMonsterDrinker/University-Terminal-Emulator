@@ -1,3 +1,39 @@
 {
-    "comment": "Заглушка. На этапе 3 здесь будет полноценное дерево VFS."
+    "name": "myvfs",
+    "root": {
+        "type": "dir",
+        "permissions": "rwxr-xr-x",
+        "owner": "root",
+        "children": {
+            "home": {
+                "type": "dir",
+                "children": {
+                    "user": {
+                        "type": "dir",
+                        "children": {
+                            "readme.txt": {
+                                "type": "file",
+                                "content": "Привет из VFS!\n",
+                                "permissions": "rw-r--r--",
+                                "owner": "user"
+                            },
+                            "notes.md": {
+                                "type": "file",
+                                "content": "# Заметки\n\n- пункт 1\n- пункт 2\n"
+                            }
+                        }
+                    }
+                }
+            },
+            "etc": {
+                "type": "dir",
+                "children": {
+                    "motd": {
+                        "type": "file",
+                        "content": "Добро пожаловать в емулятор!\n"
+                    }
+                }
+            }
+        }
+    }
 }
