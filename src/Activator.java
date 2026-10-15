@@ -15,56 +15,78 @@ public class Activator {
     private static final String ARG_CONFIG = "--config=";
 
     public static void main(String[] args) {
-        String vfsSourcePath = null;
-        String scriptPath = null;
-        String configPath = null;
+        try {
+            Config config = parseArgs(args);
+            Vfs vfs = initVfs(config);
+            startUi(vfs, config);
+        } catch (Exception e) {
+            System.err.println("Ошибка запуска: " + e.getMessage());
+            System.exit(1);
+        }
+    }
 
+
+    private static Config parseArgs(String[] args) {
+        String vfsPath = null, scriptPath = null, configPath = null;
         for (String arg : args) {
-            if (arg.startsWith(ARG_VFS))         vfsSourcePath = arg.substring(ARG_VFS.length());
-            else if (arg.startsWith(ARG_SCRIPT)) scriptPath    = arg.substring(ARG_SCRIPT.length());
-            else if (arg.startsWith(ARG_CONFIG)) configPath    = arg.substring(ARG_CONFIG.length());
+            if (arg.startsWith(ARG_VFS))         vfsPath    = arg.substring(ARG_VFS.length());
+            else if (arg.startsWith(ARG_SCRIPT)) scriptPath = arg.substring(ARG_SCRIPT.length());
+            else if (arg.startsWith(ARG_CONFIG)) configPath = arg.substring(ARG_CONFIG.length());
         }
 
-        Map<String, String> config = new HashMap<>();
-        if (configPath != null) {
-            try { config = parseYaml(Path.of(configPath)); }
-            catch (Exception e) {
-                System.err.println("Ошибка чтения конфигурационного файла: " + e.getMessage());
-                System.exit(1);
-            }
+        Map<String, String> fileConfig = readConfigFile(configPath);
+
+        if (vfsPath == null)    vfsPath    = fileConfig.get("vfs");
+        if (scriptPath == null) scriptPath = fileConfig.get("script");
+
+        return new Config(vfsPath, scriptPath);
+    }
+
+    private static Map<String, String> readConfigFile(String configPath) {
+        if (configPath == null) return Map.of();
+        try {
+            return parseYaml(Path.of(configPath));
+        } catch (Exception e) {
+            System.err.println("Ошибка чтения конфигурационного файла: " + e.getMessage());
+            System.exit(1);
+            return Map.of();
         }
+    }
 
-        if (vfsSourcePath == null) vfsSourcePath = config.get("vfs");
-        if (scriptPath == null)    scriptPath    = config.get("script");
 
-        Vfs vfs;
-        if (vfsSourcePath != null) {
-            Path vfsFile = Path.of(vfsSourcePath);
-            if (!Files.exists(vfsFile)) {
-                System.err.println("Ошибка: Файл-источник VFS не найден: " + vfsFile);
-                System.exit(1);
-                return;
-            }
-            try {
-                vfs = VfsLoader.load(vfsFile);
-                System.out.println("[DEBUG] VFS загружена: " + vfs.name()
-                + " (" + vfsFile.toAbsolutePath() + ")");
-            } catch (IOException e) {
-                System.err.println("Ошибка загрузки VFS: " + e.getMessage());
-                System.exit(1);
-                return;
-            }
-        } else {
-            vfs = VfsLoader.defaultVfs();
+    private static Vfs initVfs(Config config) {
+        if (config.vfsPath() == null) {
             System.out.println("[DEBUG] VFS по умолчанию (без --vfs)");
+            return VfsLoader.defaultVfs();
         }
-        System.out.println("[DEBUG] Скрипт: " + (scriptPath != null ? scriptPath : "не задан"));
+        Path vfsFile = Path.of(config.vfsPath());
+        if (!Files.exists(vfsFile)) {
+            System.err.println("Ошибка: Файл-источник VFS не найден: " + vfsFile);
+            System.exit(1);
+        }
+        return loadVfs(vfsFile);
+    }
 
-        final String  finalScriptPath = scriptPath;
-        final Vfs     finalVfs        = vfs;
+    private static Vfs loadVfs(Path vfsFile) {
+        try {
+            Vfs vfs = VfsLoader.load(vfsFile);
+            System.out.println("[DEBUG] VFS загружена: " + vfs.name()
+            + " (" + vfsFile.toAbsolutePath() + ")");
+            return vfs;
+        } catch (IOException e) {
+            System.err.println("Ошибка загрузки VFS: " + e.getMessage());
+            System.exit(1);
+            return null;
+        }
+    }
+
+
+    private static void startUi(Vfs vfs, Config config) {
+        System.out.println("[DEBUG] Скрипт: "
+        + (config.scriptPath() != null ? config.scriptPath() : "не задан"));
 
         BlockingQueue<String> queue = new LinkedBlockingQueue<>();
-        SwingUtilities.invokeLater(() -> createAndShowUi(queue, finalVfs, finalScriptPath));
+        SwingUtilities.invokeLater(() -> createAndShowUi(queue, vfs, config.scriptPath()));
     }
 
     private static void createAndShowUi(BlockingQueue<String> queue, Vfs vfs, String scriptPath) {
@@ -82,6 +104,7 @@ public class Activator {
         worker.start();
         ui.showPrompt();
     }
+
 
     private static void runScriptFile(UI ui, CommandInterpreter interp, Path scriptPath) {
         if (!Files.exists(scriptPath)) {
@@ -101,6 +124,7 @@ public class Activator {
         }
     }
 
+
     private static Map<String, String> parseYaml(Path path) throws IOException {
         Map<String, String> map = new HashMap<>();
         for (String line : Files.readAllLines(path)) {
@@ -118,4 +142,7 @@ public class Activator {
         }
         return map;
     }
+
+
+    private record Config(String vfsPath, String scriptPath) {}
 }
