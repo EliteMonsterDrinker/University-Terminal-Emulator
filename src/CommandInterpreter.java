@@ -91,7 +91,7 @@ public class CommandInterpreter implements Runnable {
             register(new ClearCommand());
             register(new HelpCommand());
             register(new ExitCommand());
-            register(new VfsInfoCommand());   // этап 3
-            register(new ChmodCommand());     // этап 5
+            register(new VfsInfoCommand());
+            register(new ChmodCommand());
         }
 }

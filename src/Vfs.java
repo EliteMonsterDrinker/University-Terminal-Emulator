@@ -21,7 +21,7 @@ public class Vfs {
         VfsNode cur = root;
         for (String p : path.split("/")) {
             if (p.isEmpty() || p.equals(".")) continue;
-            if (p.equals("..")) continue; // от корня наверх некуда
+            if (p.equals("..")) continue;
             if (cur == null || !cur.isDirectory()) return null;
             cur = cur.child(p);
             if (cur == null) return null;
